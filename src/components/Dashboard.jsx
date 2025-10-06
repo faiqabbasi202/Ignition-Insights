@@ -49,17 +49,10 @@ const Dashboard = () => {
           <p className="font-bold text-2xl">Team Members</p>
           <div className="flex flex-col items-center space-y-2">
             <p className="text-xl font-semibold hover:text-teal-400 transition-colors duration-200">
-              <a href="mailto:ppottipa@kent.edu" className="hover:underline">
-                Pranava Sree Pottipati - ppottipa@kent.edu
-              </a>
+              Faiq Abbasi - FA22-BDS-011
             </p>
             <p className="text-xl font-semibold hover:text-teal-400 transition-colors duration-200">
-              Dinesh Rohit Ravuri - dravuri@kent.edu
-            </p>
-            <p className="text-xl font-semibold hover:text-teal-400 transition-colors duration-200">
-              <a href="mailto:rpendurt@kent.edu" className="hover:underline">
-                Rishik Pendurthi - rpendurt@kent.edu
-              </a>
+              Hassan Sarfraz - FA22-BDS-017
             </p>
           </div>
         </div>
