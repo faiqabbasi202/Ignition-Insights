@@ -3,7 +3,8 @@ pipeline {
 
   environment {
     DOCKERHUB_REPO = 'faiqabbasi202/ignition-insights'
-    EC2_HOST = '107.23.188.255'   // ⚠️ replace with your CURRENT EC2 public IP if changed
+    EC2_HOST = '44.222.229.138
+'   // ⚠️ replace with your CURRENT EC2 public IP if changed
   }
 
   options {
