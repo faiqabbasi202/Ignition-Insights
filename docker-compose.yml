@@ -11,6 +11,8 @@ services:
 
   a2-app:
     image: faiqabbasi202/ignition-insights:latest
+    environment:
+      - MONGO_URL=mongodb://a2-mongo:27017/ignition
     depends_on:
       - a2-mongo
     ports:
