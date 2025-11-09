@@ -53,7 +53,7 @@ pipeline {
     stage('Deploy Part-2 on EC2') {
       steps {
         withCredentials([sshUserPrivateKey(
-          credentialsId: 'ec2-ssh-key',
+          credentialsId: 'ec2-ssh',
           keyFileVariable: 'KEYFILE',
           usernameVariable: 'USER'
         )]) {
