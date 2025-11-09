@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  a2-mongo:
+    image: mongo:6
+    restart: unless-stopped
+    volumes:
+      - a2-mongo-data:/data/db
+    ports:
+      - "27017:27017"
+
+  a2-app:
+    image: faiqabbasi202/ignition-insights:latest
+    depends_on:
+      - a2-mongo
+    ports:
+      - "80:8080"
+    # If your image has curl/wget, you can enable a healthcheck:
+    # healthcheck:
+    #   test: ["CMD", "sh", "-c", "curl -fsS http://localhost:8080/health || wget -qO- http://localhost:8080/health >/dev/null"]
+    #   interval: 10s
+    #   timeout: 3s
+    #   retries: 5
+
+volumes:
+  a2-mongo-data:
