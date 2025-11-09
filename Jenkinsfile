@@ -69,21 +69,24 @@ pipeline {
       }
     }
 
-    stage('Wait for Health (8081)') {
+     stage('Wait for Health (8081)') {
       steps {
         sh '''
-          for i in $(seq 1 30); do
-            if curl -fsSI "http://${EC2_HOST}:8081/" >/dev/null; then
-              echo "App healthy on 8081"
+          echo "Probing http://127.0.0.1:8081/ ..."
+          for i in $(seq 1 45); do
+            if curl -fsSI "http://127.0.0.1:8081/" >/dev/null; then
+              echo "✅ App healthy on 8081"
               exit 0
             fi
-            echo "Waiting for app on 8081... ($i/30)"
+            echo "Waiting for app on 8081... ($i/45)"
             sleep 4
           done
-          echo "App did not become healthy on 8081 in time"; exit 1
+          echo "❌ App did not become healthy on 8081 in time"
+          exit 1
         '''
       }
     }
+
 
     stage('Light Cleanup (Jenkins node)') {
       steps {
