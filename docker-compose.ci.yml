@@ -1,15 +1,21 @@
 services:
   a2-app-ci:
-    image: faiqabbasi202/ignition-insights:latest
+    image: node:20-alpine
+    container_name: a2-app-ci
+    working_dir: /app
+    # Mount the Jenkins/GitHub workspace (set by Jenkins) or local repo path
+    volumes:
+      - ${WORKSPACE:-.}:/app:ro
+    command: /bin/sh -lc "npm ci && npm start"
     environment:
       - MONGO_URL=mongodb://a2-mongo-ci:27017/ignition
-    container_name: a2-app-ci
-    ports:
-      - "8081:8080"           # App runs on port 8081 externally
+      - NODE_ENV=production
     depends_on:
       - a2-mongo-ci
+    ports:
+      - "8081:8080"
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:8080/"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/"]
       interval: 10s
       timeout: 3s
       retries: 5
@@ -18,10 +24,10 @@ services:
     image: mongo:6
     container_name: a2-mongo-ci
     ports:
-      - "27018:27017"         # Separate Mongo port
+      - "27018:27017"
     volumes:
       - mongo_data_ci:/data/db
 
 volumes:
   mongo_data_ci:
-
+  

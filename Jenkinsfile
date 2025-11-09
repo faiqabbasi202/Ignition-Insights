@@ -1,9 +1,11 @@
+// Triggers build automatically on GitHub push (requires GitHub plugin + webhook)
+properties([pipelineTriggers([githubPush()])])
+
 pipeline {
   agent any
 
   environment {
-    DOCKERHUB_REPO = 'faiqabbasi202/ignition-insights'
-    EC2_HOST       = '44.222.229.138'      // update if your public IP changes
+    EC2_HOST = '44.222.229.138'   // update if your public IP changes
   }
 
   options {
@@ -17,59 +19,32 @@ pipeline {
     stage('Checkout') {
       steps {
         checkout scm
-        script {
-          env.IMAGE_TAG = sh(
-            script: 'git rev-parse --short HEAD',
-            returnStdout: true
-          ).trim()
-        }
       }
     }
 
-    stage('Docker Build') {
-      steps {
-        sh '''
-          docker build -t ${DOCKERHUB_REPO}:latest -t ${DOCKERHUB_REPO}:${IMAGE_TAG} .
-        '''
-      }
-    }
-
-    stage('Docker Push') {
-      steps {
-        withCredentials([usernamePassword(
-          credentialsId: 'dockerhub-creds',
-          usernameVariable: 'DH_USER',
-          passwordVariable: 'DH_PASS'
-        )]) {
-          sh '''
-            echo "$DH_PASS" | docker login -u "$DH_USER" --password-stdin
-            docker push ${DOCKERHUB_REPO}:latest
-            docker push ${DOCKERHUB_REPO}:${IMAGE_TAG}
-          '''
-        }
-      }
-    }
-
-    stage('Deploy Part-2 on EC2') {
+    stage('Deploy Part-2 (Compose + Volume)') {
       steps {
         withCredentials([sshUserPrivateKey(
           credentialsId: 'ec2-ssh',
           keyFileVariable: 'KEYFILE',
           usernameVariable: 'USER'
         )]) {
-          sh """
+          sh '''
             ssh -o StrictHostKeyChecking=no -i "$KEYFILE" $USER@${EC2_HOST} '
               set -e
-              cd ~/assignment2/Ignition-Insights &&
-              docker compose -f docker-compose.ci.yml pull &&
-              docker compose -f docker-compose.ci.yml up -d
+              cd ~/assignment2/Ignition-Insights
+              # Ensure repo on EC2 has latest code from GitHub
+              git fetch origin
+              git reset --hard origin/main
+              # Bring Part-2 up using code volume (no Dockerfile build)
+              WORKSPACE="$PWD" docker compose -f docker-compose.ci.yml up -d
             '
-          """
+          '''
         }
       }
     }
 
-     stage('Wait for Health (8081)') {
+    stage('Wait for Health (8081)') {
       steps {
         sh '''
           echo "Probing http://127.0.0.1:8081/ ..."
@@ -81,12 +56,10 @@ pipeline {
             echo "Waiting for app on 8081... ($i/45)"
             sleep 4
           done
-          echo "❌ App did not become healthy on 8081 in time"
-          exit 1
+          echo "❌ App did not become healthy on 8081 in time"; exit 1
         '''
       }
     }
-
 
     stage('Light Cleanup (Jenkins node)') {
       steps {
