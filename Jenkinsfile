@@ -3,8 +3,7 @@ pipeline {
 
   environment {
     DOCKERHUB_REPO = 'faiqabbasi202/ignition-insights'
-    EC2_HOST = '44.222.229.138
-'   // ⚠️ replace with your CURRENT EC2 public IP if changed
+    EC2_HOST = '44.222.229.138'   // ✅ current EC2 public IP
   }
 
   options {
@@ -54,21 +53,19 @@ pipeline {
 
     stage('Deploy to EC2') {
       steps {
-        sshagent (credentials: ['ec2-ssh']) {
+        withCredentials([
+          sshUserPrivateKey(
+            credentialsId: 'ec2-ssh-key',
+            keyFileVariable: 'KEYFILE',
+            usernameVariable: 'USER'
+          )
+        ]) {
           sh """
-            ssh -o StrictHostKeyChecking=no ubuntu@${EC2_HOST} \
-            'bash ~/assignment2/Ignition-Insights/deploy.sh'
-          """
-        }
-      }
-    }
-
-    stage('Health Check') {
-      steps {
-        sshagent (credentials: ['ec2-ssh']) {
-          sh """
-            ssh -o StrictHostKeyChecking=no ubuntu@${EC2_HOST} \
-            'curl -sf http://127.0.0.1/'
+            ssh -o StrictHostKeyChecking=no -i "$KEYFILE" $USER@${EC2_HOST} '
+              cd ~/assignment2/Ignition-Insights &&
+              docker compose pull &&
+              docker compose up -d
+            '
           """
         }
       }
@@ -76,14 +73,12 @@ pipeline {
   }
 
   post {
-    always {
-      sh 'docker logout || true'
-    }
     success {
-      echo "✅ Deployed ${DOCKERHUB_REPO}:${IMAGE_TAG} successfully!"
+      echo "✅ Deployment completed successfully on ${EC2_HOST}"
     }
     failure {
-      echo "❌ Build or deploy failed. Check console output."
+      echo "❌ Deployment failed! Check Jenkins logs."
     }
   }
 }
+
