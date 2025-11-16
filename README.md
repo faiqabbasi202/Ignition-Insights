@@ -1,4 +1,4 @@
-# Ignition-Insights: D3 + React Car Data Dashboard project:
+ # Ignition-Insights: D3 + React Car Data Dashboard project:
 
 ## Car Dataset Dashboard – Coordinated Multi-View Visualization with D3.js + React
 
