@@ -6,7 +6,7 @@ services:
     # Mount the Jenkins/GitHub workspace (set by Jenkins) or local repo path
     volumes:
       - ${WORKSPACE:-.}:/app
-    command: /bin/sh -lc "npm ci && npm start"
+    command: /bin/sh -lc "npm ci && npm run build && npm start"
     environment:
       - MONGO_URL=mongodb://a2-mongo-ci:27017/ignition
       - NODE_ENV=production

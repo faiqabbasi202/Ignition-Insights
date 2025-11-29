@@ -64,7 +64,7 @@ pipeline {
                 echo "a2-app-ci health: \$state (\$i/120)"
                 if [ "\$state" = "healthy" ]; then
                   echo "Container is healthy. Probing HTTP..."
-                  curl -fsSI http://127.0.0.1:8081/ && exit 0
+                  curl -fsS http://127.0.0.1:8081/health && exit 0
                 fi
                 sleep 4
               done
