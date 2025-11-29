@@ -5,7 +5,7 @@ pipeline {
   agent any
 
   environment {
-    EC2_HOST = '44.222.229.138'   // update if your public IP changes
+    EC2_HOST = '13.217.231.190'   // update if your public IP changes
   }
 
   options {
