@@ -30,15 +30,12 @@ pipeline {
           usernameVariable: 'USER'
         )]) {
           sh """
-            ssh -o StrictHostKeyChecking=no -i "\$KEYFILE" \$USER@${EC2_HOST} '
-              set -e
-              cd ~/assignment2/Ignition-Insights
-              # Ensure repo on EC2 has latest code from GitHub
-              git fetch origin
-              git reset --hard origin/main
-              # Bring Part-2 up using code volume (no Dockerfile build)
-              WORKSPACE="\$PWD" docker compose -f docker-compose.ci.yml up -d
-            '
+            ssh -o StrictHostKeyChecking=no -i "\$KEYFILE" \$USER@${EC2_HOST} \\
+              'set -e && \\
+              cd ~/assignment2/Ignition-Insights && \\
+              git fetch origin && \\
+              git reset --hard origin/main && \\
+              WORKSPACE=\$(pwd) docker compose -f docker-compose.ci.yml up -d'
           """
         }
       }
