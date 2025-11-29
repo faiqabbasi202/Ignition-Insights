@@ -124,7 +124,7 @@ pipeline {
           <p><b>Triggered by:</b> ${env.CHANGE_AUTHOR ?: 'Unknown'}</p>
         """,
         mimeType: 'text/html',
-        to: 'faiq.abbasi2005@gmail.com',
+        to: 'faiq.abbasi2005@gmail.com, qasimalik@gmail.com',
         recipientProviders: [developers(), requestor()],
         from: 'faiq.abbasi2005@gmail.com'
       )
@@ -142,7 +142,7 @@ pipeline {
           <p><b>Triggered by:</b> ${env.CHANGE_AUTHOR ?: 'Unknown'}</p>
         """,
         mimeType: 'text/html',
-        to: 'faiq.abbasi2005@gmail.com',
+        to: 'faiq.abbasi2005@gmail.com, qasimalik@gmail.com',
         recipientProviders: [developers(), requestor()],
         from: 'faiq.abbasi2005@gmail.com'
       )
@@ -160,7 +160,7 @@ pipeline {
           <p><b>Triggered by:</b> ${env.CHANGE_AUTHOR ?: 'Unknown'}</p>
         """,
         mimeType: 'text/html',
-        to: 'faiq.abbasi2005@gmail.com',
+        to: 'faiq.abbasi2005@gmail.com, qasimalik@gmail.com',
         recipientProviders: [developers(), requestor()],
         from: 'faiq.abbasi2005@gmail.com'
       )
