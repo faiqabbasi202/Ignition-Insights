@@ -1,7 +1,7 @@
 const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const assert = require('assert');
-const { getChromeOptions, BASE_URL, TIMEOUT } = require('./test.config.cjs');
+const { getChromeOptions, getChromeService, BASE_URL, TIMEOUT } = require('./test.config.cjs');
 
 describe('Ignition Insights Dashboard Tests', function () {
   this.timeout(15000);
@@ -14,11 +14,13 @@ describe('Ignition Insights Dashboard Tests', function () {
 
     console.log('⏳ Creating Chrome WebDriver instance...');
     const options = getChromeOptions();
+    const service = getChromeService();
     driver = await new Builder()
       .forBrowser('chrome')
       .setChromeOptions(options)
+      .setChromeService(service)
       .build();
-    console.log('✅ Chrome WebDriver created successfully');
+    console.log('✅ Chrome WebDriver created successfully!');
 
     console.log('⏳ Loading dashboard page...');
     await driver.get(BASE_URL);
