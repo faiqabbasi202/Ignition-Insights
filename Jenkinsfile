@@ -124,8 +124,9 @@ pipeline {
           <p><b>Triggered by:</b> ${env.CHANGE_AUTHOR ?: 'Unknown'}</p>
         """,
         mimeType: 'text/html',
-        to: "${env.CHANGE_AUTHOR_EMAIL ?: 'faiq.abbasi2005@gmail.com'}",
-        from: 'jenkins@devops.com'
+        to: 'faiq.abbasi2005@gmail.com',
+        recipientProviders: [developers(), requestor()],
+        from: 'faiq.abbasi2005@gmail.com'
       )
     }
     failure { 
@@ -141,8 +142,9 @@ pipeline {
           <p><b>Triggered by:</b> ${env.CHANGE_AUTHOR ?: 'Unknown'}</p>
         """,
         mimeType: 'text/html',
-        to: "${env.CHANGE_AUTHOR_EMAIL ?: 'faiq.abbasi2005@gmail.com'}",
-        from: 'jenkins@devops.com'
+        to: 'faiq.abbasi2005@gmail.com',
+        recipientProviders: [developers(), requestor()],
+        from: 'faiq.abbasi2005@gmail.com'
       )
     }
     unstable {
@@ -158,8 +160,9 @@ pipeline {
           <p><b>Triggered by:</b> ${env.CHANGE_AUTHOR ?: 'Unknown'}</p>
         """,
         mimeType: 'text/html',
-        to: "${env.CHANGE_AUTHOR_EMAIL ?: 'faiq.abbasi2005@gmail.com'}",
-        from: 'jenkins@devops.com'
+        to: 'faiq.abbasi2005@gmail.com',
+        recipientProviders: [developers(), requestor()],
+        from: 'faiq.abbasi2005@gmail.com'
       )
     }
     always  { sh 'df -h || true' }
