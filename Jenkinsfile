@@ -81,6 +81,28 @@ pipeline {
       }
     }
 
+    stage('Run Selenium Tests') {
+      steps {
+        script {
+          try {
+            // Build test Docker image
+            sh 'docker build -f Dockerfile.test -t ignition-tests:latest .'
+            
+            // Run tests in Docker container
+            sh """
+              docker run --rm \
+                --network="host" \
+                -e BASE_URL=http://localhost:8081 \
+                ignition-tests:latest
+            """
+          } catch (Exception e) {
+            currentBuild.result = 'UNSTABLE'
+            echo "⚠️ Tests failed: ${e.message}"
+          }
+        }
+      }
+    }
+
     stage('Light Cleanup (Jenkins node)') {
       steps {
         sh '''
@@ -92,8 +114,57 @@ pipeline {
   }
 
   post {
-    success { echo '✅ Build & Deploy OK' }
-    failure { echo '❌ Deployment failed — check console log' }
+    success { 
+      echo '✅ Build & Deploy OK'
+      emailext(
+        subject: "Jenkins Build Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+        body: """
+          <h2>Build Successful ✅</h2>
+          <p><b>Job:</b> ${env.JOB_NAME}</p>
+          <p><b>Build Number:</b> ${env.BUILD_NUMBER}</p>
+          <p><b>Build URL:</b> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+          <p><b>Test Results:</b> All tests passed</p>
+          <p><b>Triggered by:</b> ${env.CHANGE_AUTHOR ?: 'Unknown'}</p>
+        """,
+        mimeType: 'text/html',
+        to: "${env.CHANGE_AUTHOR_EMAIL ?: 'faiq.abbasi2005@gmail.com'}",
+        from: 'jenkins@devops.com'
+      )
+    }
+    failure { 
+      echo '❌ Deployment failed — check console log'
+      emailext(
+        subject: "Jenkins Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+        body: """
+          <h2>Build Failed ❌</h2>
+          <p><b>Job:</b> ${env.JOB_NAME}</p>
+          <p><b>Build Number:</b> ${env.BUILD_NUMBER}</p>
+          <p><b>Build URL:</b> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+          <p><b>Console Output:</b> <a href="${env.BUILD_URL}console">${env.BUILD_URL}console</a></p>
+          <p><b>Triggered by:</b> ${env.CHANGE_AUTHOR ?: 'Unknown'}</p>
+        """,
+        mimeType: 'text/html',
+        to: "${env.CHANGE_AUTHOR_EMAIL ?: 'faiq.abbasi2005@gmail.com'}",
+        from: 'jenkins@devops.com'
+      )
+    }
+    unstable {
+      emailext(
+        subject: "Jenkins Build Unstable (Tests Failed): ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+        body: """
+          <h2>Build Unstable ⚠️</h2>
+          <p><b>Job:</b> ${env.JOB_NAME}</p>
+          <p><b>Build Number:</b> ${env.BUILD_NUMBER}</p>
+          <p><b>Issue:</b> Some tests failed</p>
+          <p><b>Build URL:</b> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+          <p><b>Test Report:</b> <a href="${env.BUILD_URL}testReport/">${env.BUILD_URL}testReport/</a></p>
+          <p><b>Triggered by:</b> ${env.CHANGE_AUTHOR ?: 'Unknown'}</p>
+        """,
+        mimeType: 'text/html',
+        to: "${env.CHANGE_AUTHOR_EMAIL ?: 'faiq.abbasi2005@gmail.com'}",
+        from: 'jenkins@devops.com'
+      )
+    }
     always  { sh 'df -h || true' }
   }
 }

@@ -1,0 +1,12 @@
+{
+  "require": ["./tests/test.config.cjs"],
+  "spec": "tests/**/*.test.cjs",
+  "timeout": 30000,
+  "reporter": "mochawesome",
+  "reporter-option": [
+    "reportDir=test-results",
+    "reportFilename=test-report",
+    "html=true",
+    "json=true"
+  ]
+}

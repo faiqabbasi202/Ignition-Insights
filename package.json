@@ -6,19 +6,21 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "mocha",
+    "test:headless": "mocha --require ./tests/test.config.cjs"
   },
   "dependencies": {
     "d3": "^7.9.0",
+    "express": "^4.19.2",
     "html-to-image": "^1.11.13",
     "html2canvas": "^1.4.1",
+    "mongodb": "^6.8.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.4.1",
-    "recharts": "^2.15.2",
-    "express": "^4.19.2",
-    "mongodb": "^6.8.0"
+    "recharts": "^2.15.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
@@ -26,13 +28,17 @@
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.21",
+    "chromedriver": "^142.0.3",
     "eslint": "^9.21.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
+    "mocha": "^11.7.5",
+    "mochawesome": "^7.1.4",
+    "mochawesome-report-generator": "^6.3.2",
     "postcss": "^8.5.3",
+    "selenium-webdriver": "^4.38.0",
     "tailwindcss": "^3.4.17",
     "vite": "^6.2.0"
   }
 }
-
