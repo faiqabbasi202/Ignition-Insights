@@ -5,7 +5,7 @@ services:
     working_dir: /app
     # Mount the Jenkins/GitHub workspace (set by Jenkins) or local repo path
     volumes:
-      - ${WORKSPACE:-.}:/app:ro
+      - ${WORKSPACE:-.}:/app
     command: /bin/sh -lc "npm ci && npm start"
     environment:
       - MONGO_URL=mongodb://a2-mongo-ci:27017/ignition
